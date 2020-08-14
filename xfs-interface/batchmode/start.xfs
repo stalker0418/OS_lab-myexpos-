@@ -1,0 +1,19 @@
+load --os ../spl/spl_progs/os_startup.xsm
+load --int=10 ../spl/spl_progs/halt_prog.xsm
+load --int=timer ../spl/spl_progs/timer.xsm
+load --exhandler ../spl/spl_progs/halt_prog.xsm
+load --library ../expl/library.lib
+load --idle ../expl/expl_progs/idle.xsm
+load --int=7 ../spl/spl_progs/int7.xsm
+load --int=6 ../spl/spl_progs/int6.xsm
+load --module 5 ../spl/spl_progs/schedule_module.xsm
+load --module 7 ../spl/spl_progs/bootmodule.xsm
+load --module 4 ../spl/spl_progs/device_manager.xsm
+load --module 0 ../spl/spl_progs/terminal_handler.xsm
+load --int=console ../spl/spl_progs/console_interrupt.xsm
+load --init ../expl/samples/oddnums.xsm
+rm evennums.xsm
+load --exec ../expl/samples/evennums.xsm
+rm primes.xsm
+load --exec ../expl/samples/primes.xsm
+exit
