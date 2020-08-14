@@ -1,0 +1,17 @@
+[PROCESS_TABLE+([SYSTEM_STATUS_TABLE+1])*16+4]=TERMINATED;
+alias counter R3;
+counter=1;
+alias not_term R4;
+not_term=0;
+while(counter<MAX_PROC_NUM) do
+     if([PROCESS_TABLE+(counter)*16+4]!=TERMINATED) then
+         not_term=not_term+1;
+     endif;
+     counter=counter+1;
+endwhile;
+if(not_term>0) then
+ call MOD_5;
+else 
+   halt;
+
+endif;

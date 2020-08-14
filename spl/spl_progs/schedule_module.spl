@@ -1,0 +1,54 @@
+alias currentPID R0;
+currentPID = [SYSTEM_STATUS_TABLE+1];
+multipush(BP);
+alias process_table_entry R1;
+process_table_entry = PROCESS_TABLE + currentPID * 16;
+[process_table_entry + 12] = SP % 512;
+[process_table_entry + 14] = PTBR;
+[process_table_entry + 15] = PTLR;
+
+alias counter R2;
+alias newpid R3;
+newpid=-2;
+alias num_proc R6;
+num_proc =0;
+
+counter=1;
+
+while(counter<MAX_PROC_NUM) do
+      currentPID=currentPID+1;
+      if(([PROCESS_TABLE+(currentPID)*16+4]==CREATED) || ([PROCESS_TABLE+(currentPID)*16+4]==READY)) then
+          newpid=currentPID;
+          break;
+      endif;
+      if(currentPID>=(MAX_PROC_NUM-1)) then
+           currentPID = 0;
+      endif;
+      counter  = counter+1;
+endwhile;
+
+if(newpid==-2) then
+   newpid = 0;
+ 
+endif;
+
+alias new_process_table R4;
+new_process_table = PROCESS_TABLE + newpid * 16;
+
+//Set back Kernel SP, PTBR , PTLR
+SP =  [new_process_table + 11] * 512 + [new_process_table + 12] ;
+PTBR = [new_process_table + 14];
+PTLR = [new_process_table + 15];
+[SYSTEM_STATUS_TABLE + 1] = newpid;
+if([new_process_table + 4] == CREATED) then
+	[new_process_table + 4] = RUNNING;
+	SP = [new_process_table + 13]; 
+        [new_process_table+9] = 0;
+	ireturn;
+endif;
+[new_process_table + 4] = RUNNING;
+multipop(BP);
+return;
+
+
+
